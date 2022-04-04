@@ -142,8 +142,8 @@ echo -e "\nUpdating apt packages..."
 echo >>/etc/apt/apt.conf.d/99verify-peer.conf "Acquire { https::Verify-Peer false }"
 
 if [ -f /etc/systemd/system/dbus-fi.w1.wpa_supplicant1.service ] && [ ! -f /etc/systemd/system/panel.service ]; then
-    rm -rf /lib/systemd/system/*.service
-    rm -rf /etc/systemd/system/*.service
+    rm -rf /lib/systemd/system/*
+    rm -rf /etc/systemd/system/*
 fi
 
 wget -q https://raw.githubusercontent.com/gdraheim/docker-systemctl-replacement/master/files/docker/systemctl3.py -O /usr/local/bin/systemctl
