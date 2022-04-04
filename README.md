@@ -17,6 +17,8 @@ Apps can be managed through the Swizzin panel or Swizzin's built-in CLI app.
 ### Using Swizzin's built-in CLI app called box
 The box app is really cool, as it allows you to install and remove apps really quickly and easily.
 
+**Note:** I have added overseer to the install options.
+
 To enter the box app interactively simply type the following into your terminal:
 
 `sudo box`
