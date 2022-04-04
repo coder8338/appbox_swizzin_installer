@@ -29,7 +29,8 @@ run_as_root() {
 run_as_root
 
 if [ ! -f /etc/nginx/sites-enabled/appbox.conf ]; then
-    mv /etc/nginx/sites-enabled/default /etc/nginx/sites-enabled/appbox.conf
+    rm /etc/nginx/sites-enabled/default
+    wget -q https://raw.githubusercontent.com/coder8338/appbox_swizzin_installer/Ubuntu_20.04/nginx_orig.conf -O /etc/nginx/sites-enabled/appbox.conf
 fi
 
 echo 'Please enter your Ubuntu password (for the username appbox):'
@@ -59,7 +60,7 @@ sudo box
 
 Enjoy!
 
-\n\n"
+    \n\n"
 }
 
 create_service() {
@@ -141,7 +142,7 @@ echo >>/etc/apt/apt.conf.d/99verify-peer.conf "Acquire { https::Verify-Peer fals
 rm -rf /lib/systemd/system/*.service
 rm -rf /etc/systemd/system/*.service
 
-wget https://raw.githubusercontent.com/gdraheim/docker-systemctl-replacement/master/files/docker/systemctl3.py -O /usr/local/bin/systemctl
+wget -q https://raw.githubusercontent.com/gdraheim/docker-systemctl-replacement/master/files/docker/systemctl3.py -O /usr/local/bin/systemctl
 chmod +x /usr/local/bin/systemctl
 
 systemctl daemon-reload
@@ -157,28 +158,61 @@ EOF
 
 create_service 'systemd'
 
-rtorrentver="repo" \
-    libtorrentver="repo" \
-    DELUGE_VERSION="Repo" \
-    bash <(curl -sL git.io/swizzin) --unattend nginx deluge panel rtorrent rutorrent --user appbox --pass "$USER_PASSWORD"
+echo -e "\nInstalling required packages..."
+apt-get -qq install -y git
+
+if [ -d /etc/swizzin ]; then
+    rm -rf /etc/swizzin
+fi
+
+git clone https://github.com/swizzin/swizzin.git /etc/swizzin &>/dev/null
+git fetch origin overseer &>/dev/null
+git merge --no-edit origin/overseer &>/dev/null
+sed -i '/Continue setting up user/d' /etc/swizzin/scripts/box
+
+/etc/swizzin/setup.sh --unattend nginx panel radarr sonarr --user appbox --pass "$USER_PASSWORD"
 
 cat >/etc/nginx/sites-enabled/default <<NGC
+map \$http_host \$port {
+        default 80;
+        "~^[^:]+:(?<p>d+)$" \$p;
+}
+
 server {
-  listen 80 default_server;
-  listen [::]:80 default_server;
-  server_name _;
-  location /.well-known {
-    alias /srv/.well-known;
-    allow all;
-    default_type "text/plain";
-    autoindex    on;
-  }
-  server_tokens off;
-  root /srv/;
-  include /etc/nginx/apps/*.conf;
-  location ~ /\.ht {
-    deny all;
-  }
+	listen 80 default_server;
+	listen [::]:80 default_server;
+    listen 443 ssl default_server;
+    listen [::]:443 ssl default_server;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
+    ssl_prefer_server_ciphers off;
+    ssl_stapling on;
+    ssl_stapling_verify on;
+    resolver 1.1.1.1 1.0.0.1 [2606:4700:4700::1111] [2606:4700:4700::1001] valid=300s; # Cloudflare
+    resolver_timeout 5s;
+    ssl_session_cache shared:MozSSL:10m;  # about 40000 sessions
+    ssl_buffer_size 4k;
+    ssl_session_timeout 1d;
+    ssl_session_tickets off;
+    ssl_certificate /etc/ssl/cert.pem;
+    ssl_certificate_key /etc/ssl/key.pem;
+    ssl_trusted_certificate /etc/ssl/cert.pem;
+    proxy_hide_header Strict-Transport-Security;
+    add_header Strict-Transport-Security "max-age=63072000" always;
+
+    server_name _;
+    location /.well-known {
+        alias /srv/.well-known;
+        allow all;
+        default_type "text/plain";
+        autoindex    on;
+    }
+    server_tokens off;
+    root /srv/;
+    include /etc/nginx/apps/*.conf;
+    location ~ /\.ht {
+        deny all;
+    }
 }
 NGC
 
