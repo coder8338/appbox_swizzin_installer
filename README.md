@@ -52,3 +52,14 @@ To install a new app:
   
 To uninstall an app:
 `sudo box uninstall <app name>`
+
+## FAQs
+Q: I want auto moving from my torrent client to anywhere using Radarr/Sonarr
+
+A: You'll need to mirror the torrent client's directories using:
+
+```
+sudo ln -s /APPBOX_DATA/apps/<TORRENT CLIENT>.<YOUR APPBOX NAME>.appboxes.co/torrents/ /torrents
+sudo ln -s /APPBOX_DATA/apps/ /torrents/home/apps
+sudo ln -s /APPBOX_DATA/storage/ /torrents/home/storage
+```
