@@ -4,20 +4,6 @@ export DEBIAN_FRONTEND=noninteractive
 
 OLD_INSTALLS_EXIST=0
 
-check_old_installs() {
-    echo "Checking for old installs..."
-    # Create array of old installs
-    OLD_INSTALLS=(radarr sonarr sickchill jackett couchpotato nzbget sabnzbdplus ombi lidarr organizr nzbhydra2 bazarr flexget filebot synclounge medusa lazylibrarian pyload ngpost komga ombiv4 readarr overseerr requestrr updatetool flood tautulli unpackerr mylar flaresolverr)
-
-    # Loop through array
-    for i in "${OLD_INSTALLS[@]}"; do
-        # Check if install exists
-        if [ -d "/etc/services.d/$i" ]; then
-            OLD_INSTALLS_EXIST=1
-        fi
-    done
-}
-
 run_as_root() {
     if ! whoami | grep -q 'root'; then
         echo "This script must be run with sudo, please run:"
@@ -28,12 +14,7 @@ run_as_root() {
 
 run_as_root
 
-if [ ! -f /etc/nginx/sites-enabled/appbox.conf ]; then
-    rm /etc/nginx/sites-enabled/default
-    wget -q https://raw.githubusercontent.com/coder8338/appbox_swizzin_installer/Ubuntu_20.04/nginx_orig.conf -O /etc/nginx/sites-enabled/appbox.conf
-fi
-
-echo 'Please enter your Ubuntu password (for the username appbox):'
+echo 'Please enter your Debian password (for the username appbox):'
 read -r USER_PASSWORD
 
 userline=$(sudo awk -v u=appbox -F: 'u==$1 {print $2}' /etc/shadow)
@@ -44,6 +25,8 @@ if [[ ! "$(printf "${USER_PASSWORD}" | openssl passwd -"${a[1]}" -salt "${a[2]}"
     echo "Password does not match"
     exit 1
 fi
+
+cd /tmp || exit 1
 
 url_output() {
     echo -e "\n\n\n\n\n
@@ -139,8 +122,11 @@ cert-sync --quiet /etc/ssl/certs/ca-certificates.crt
 echo -e "\nUpdating apt packages..."
 echo >>/etc/apt/apt.conf.d/99verify-peer.conf "Acquire { https::Verify-Peer false }"
 
-rm -rf /lib/systemd/system/*.service
-rm -rf /etc/systemd/system/*.service
+# Just do this the first time
+if [ -f /etc/systemd/system/dbus-fi.w1.wpa_supplicant1.service ] && [ ! -f /etc/systemd/system/panel.service ]; then
+    rm -rf /lib/systemd/system/*.service
+    rm -rf /etc/systemd/system/*.service
+fi
 
 wget -q https://raw.githubusercontent.com/gdraheim/docker-systemctl-replacement/master/files/docker/systemctl3.py -O /usr/local/bin/systemctl
 chmod +x /usr/local/bin/systemctl
