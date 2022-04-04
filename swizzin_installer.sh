@@ -4,20 +4,6 @@ export DEBIAN_FRONTEND=noninteractive
 
 OLD_INSTALLS_EXIST=0
 
-check_old_installs() {
-    echo "Checking for old installs..."
-    # Create array of old installs
-    OLD_INSTALLS=(radarr sonarr sickchill jackett couchpotato nzbget sabnzbdplus ombi lidarr organizr nzbhydra2 bazarr flexget filebot synclounge medusa lazylibrarian pyload ngpost komga ombiv4 readarr overseerr requestrr updatetool flood tautulli unpackerr mylar flaresolverr)
-
-    # Loop through array
-    for i in "${OLD_INSTALLS[@]}"; do
-        # Check if install exists
-        if [ -d "/etc/services.d/$i" ]; then
-            OLD_INSTALLS_EXIST=1
-        fi
-    done
-}
-
 run_as_root() {
     if ! whoami | grep -q 'root'; then
         echo "This script must be run with sudo, please run:"
@@ -28,12 +14,7 @@ run_as_root() {
 
 run_as_root
 
-if [ ! -f /etc/nginx/sites-enabled/appbox.conf ]; then
-    rm /etc/nginx/sites-enabled/default
-    wget -q https://raw.githubusercontent.com/coder8338/appbox_swizzin_installer/Ubuntu_20.04/nginx_orig.conf -O /etc/nginx/sites-enabled/appbox.conf
-fi
-
-echo 'Please enter your Ubuntu password (for the username appbox):'
+echo 'Please enter your Debian password (for the username appbox):'
 read -r USER_PASSWORD
 
 userline=$(sudo awk -v u=appbox -F: 'u==$1 {print $2}' /etc/shadow)
@@ -141,6 +122,7 @@ cert-sync --quiet /etc/ssl/certs/ca-certificates.crt
 echo -e "\nUpdating apt packages..."
 echo >>/etc/apt/apt.conf.d/99verify-peer.conf "Acquire { https::Verify-Peer false }"
 
+# Just do this the first time
 if [ -f /etc/systemd/system/dbus-fi.w1.wpa_supplicant1.service ] && [ ! -f /etc/systemd/system/panel.service ]; then
     rm -rf /lib/systemd/system/*
     rm -rf /etc/systemd/system/*
@@ -221,6 +203,45 @@ server {
     location ~ /\.ht {
         deny all;
     }
+
+    location /vnc {
+        index vnc.html;
+        alias /usr/share/novnc/;
+        try_files \$uri \$uri/ /vnc.html;
+    }
+    location /websockify_audio {
+        proxy_http_version 1.1;
+        proxy_pass http://localhost:6081/;
+        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_read_timeout 61s;
+        proxy_buffering off;
+    }
+    location /websockify {
+        proxy_http_version 1.1;
+        proxy_pass http://localhost:6080/;
+        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_read_timeout 61s;
+        proxy_buffering off;
+    }
+    proxy_set_header X-Real-IP \$remote_addr;
+    proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Server \$host;
+    proxy_set_header X-Forwarded-Port \$port;
+    proxy_set_header X-Forwarded-Proto \$scheme;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade \$http_upgrade;
+    proxy_set_header Connection \$http_connection;
+    proxy_set_header Host \$host;
+    proxy_cache_bypass \$http_upgrade;
+    proxy_set_header X-Forwarded-Host \$host;
+    proxy_connect_timeout 300s;
+    proxy_read_timeout 3600s;
+    client_header_timeout 300s;
+    client_body_timeout 300s;
+    client_max_body_size 1000M;
+    send_timeout 300s;
 }
 NGC
 
