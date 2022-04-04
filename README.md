@@ -38,7 +38,7 @@ to stop an app:
 
 to disable an app:
 
-`sudo box disable <app name>
+`sudo box disable <app name>`
 
 ### Installing/uninstalling apps
 
