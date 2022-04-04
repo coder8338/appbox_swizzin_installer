@@ -9,7 +9,10 @@ Finally you can install Swizzin on appbox! I decided to depreciate the appbox_in
 3. Enter the following `sudo bash -c "bash <(curl -Ls https://raw.githubusercontent.com/coder8338/appbox_swizzin_installer/Ubuntu-20.04/swizzin_installer.sh)"`
 
 ## Pre-installed apps
-The script will pre-install rutorrent, rtorrent & panel apps.
+The script will pre-install sonarr, radarr & panel apps.
+
+## Requesting additional apps
+You can request new apps & features here: https://feathub.com/liaralabs/swizzin
 
 ## How to manage apps
 Apps can be managed through the Swizzin panel or Swizzin's built-in CLI app.
