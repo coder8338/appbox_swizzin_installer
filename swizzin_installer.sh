@@ -147,6 +147,7 @@ if [ -f /etc/systemd/system/dbus-fi.w1.wpa_supplicant1.service ] && [ ! -f /etc/
 fi
 
 echo "Upgrading system..."
+apt-get -qq update
 apt-get -qq upgrade -y
 
 wget -q https://raw.githubusercontent.com/gdraheim/docker-systemctl-replacement/master/files/docker/systemctl3.py -O /usr/local/bin/systemctl
