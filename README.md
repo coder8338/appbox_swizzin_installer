@@ -1,8 +1,8 @@
-# Swizzin installer for Appbox on the Ubuntu 20.04 app!
+# Swizzin installer for Appbox on the Debian app!
 Finally you can install Swizzin on appbox! I decided to depreciate the appbox_installer as Swizzin seems to cover almost everything and is constantly updated.
 
 ## How to run
-1. Install the [Ubuntu 20.04 app](https://www.appbox.co/appstore/app/210)
+1. Install the [Debian app](https://www.appbox.co/appstore/app/163)
 
 2. Connect to your Ubuntu either through SSH or by the No VNC WebUI (and clicking the "Applications" menu, then "Terminal Emulator")
 
@@ -52,3 +52,14 @@ To install a new app:
   
 To uninstall an app:
 `sudo box uninstall <app name>`
+
+## FAQs
+Q: I want auto moving from my torrent client to anywhere using Radarr/Sonarr
+
+A: You'll need to mirror the torrent client's directories using:
+
+```
+sudo ln -s /APPBOX_DATA/apps/<TORRENT CLIENT>.<YOUR APPBOX NAME>.appboxes.co/torrents/ /torrents
+sudo ln -s /APPBOX_DATA/apps/ /torrents/home/apps
+sudo ln -s /APPBOX_DATA/storage/ /torrents/home/storage
+```
