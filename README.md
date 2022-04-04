@@ -1,6 +1,8 @@
 # Swizzin installer for Appbox on the Debian 11 app!
 Finally you can install Swizzin on appbox! I decided to depreciate the appbox_installer as Swizzin seems to cover almost everything and is constantly updated.
 
+If you're looking to run this on Ubuntu 20.04, please [click here!](https://github.com/coder8338/appbox_swizzin_installer/tree/Ubuntu_20.04)
+
 ## How to run
 1. Install the [Debian 11](https://www.appbox.co/appstore/app/217)
 
