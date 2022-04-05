@@ -3,6 +3,11 @@ Finally you can install Swizzin on appbox! I decided to depreciate the appbox_in
 
 If you're looking to run this on Debian 11, please [click here!](https://github.com/coder8338/appbox_swizzin_installer/tree/Debian_11)
 
+## What's Swizzin?
+Swizzin was designed to be an easy to use, modular seedbox solution. It currently supports installing over 50 apps! It comes with a cool dashboard to monitor your apps and a nice easy CLI interface for installing more apps.
+
+For more info check: https://swizzin.ltd/
+
 ## Performance
 In order to get the best performance, I recommend using Debian 11, it has minimal other things installed so it's much faster. [Click here!](https://github.com/coder8338/appbox_swizzin_installer/tree/Debian_11) to go to the Debian 11 version!
 
