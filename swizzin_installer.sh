@@ -12,17 +12,44 @@ run_as_root() {
 
 run_as_root
 
+cd /tmp || exit 1
+
+echo "Getting packages..."
+apt-get -qq update
+
+echo -e "\nInstalling required packages..."
+apt-get -qq install -y git expect
+
 echo 'Please enter your Ubuntu password (for the username appbox):'
 read -r USER_PASSWORD
 
-userline=$(sudo awk -v u=appbox -F: 'u==$1 {print $2}' /etc/shadow)
-IFS='$'
-a=($userline)
+cat >/tmp/check.sh <<PWD
+#!/bin/bash
+expect << EOF
+spawn su appbox -c "exit" 
+expect "Password:"
+send "$USER_PASSWORD\r"
+#expect eof
+set wait_result  [wait]
+if {[lindex \\\$wait_result 2] == 0} {
+        exit [lindex \\\$wait_result 3]
+} 
+else {
+        exit 1 
+}
+EOF
+PWD
+chmod +x /tmp/check.sh
 
-if [[ ! "$(printf "${USER_PASSWORD}" | openssl passwd -"${a[1]}" -salt "${a[2]}" -stdin)" = "${userline}" ]]; then
+if ! su -c "/tmp/check.sh" appbox; then
     echo "Password does not match"
+    rm /tmp/check.sh
     exit 1
 fi
+rm /tmp/check.sh
+
+echo "Upgrading system..."
+apt-get -qq upgrade -y
 
 url_output() {
     echo -e "\n\n\n\n\n
@@ -43,19 +70,6 @@ Enjoy!
 }
 
 mkdir -p /run/php/
-
-# Just do this the first time
-if [ -f /etc/systemd/system/dbus-fi.w1.wpa_supplicant1.service ] && [ ! -f /etc/systemd/system/panel.service ]; then
-    rm -rf /lib/systemd/system/*
-    rm -rf /etc/systemd/system/*
-fi
-
-echo "Upgrading system..."
-apt-get -qq update
-apt-get -qq upgrade -y
-
-echo -e "\nInstalling required packages..."
-apt-get -qq install -y git
 
 if [ -d /etc/swizzin ]; then
     rm -rf /etc/swizzin
