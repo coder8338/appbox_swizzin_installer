@@ -20,7 +20,7 @@ apt-get -qq update
 echo -e "\nInstalling required packages..."
 apt-get -qq install -y git expect
 
-echo 'Please enter your Ubuntu password (for the username appbox):'
+echo 'Please enter your Debian password (for the username appbox):'
 read -r USER_PASSWORD
 
 cat >/tmp/check.sh <<PWD
