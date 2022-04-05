@@ -159,6 +159,7 @@ git clone https://github.com/swizzin/swizzin.git /etc/swizzin &>/dev/null
 cd /etc/swizzin || exit 1
 git fetch origin overseer &>/dev/null
 git merge --no-edit origin/overseer &>/dev/null
+sed -i '/Type=exec/d' /etc/swizzin/scripts/install/overseerr.sh
 sed -i '/Continue setting up user/d' /etc/swizzin/scripts/box
 
 /etc/swizzin/setup.sh --unattend nginx panel radarr sonarr --user appbox --pass "$USER_PASSWORD"
