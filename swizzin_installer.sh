@@ -76,6 +76,7 @@ if [ -d /etc/swizzin ]; then
 fi
 
 git clone https://github.com/swizzin/swizzin.git /etc/swizzin &>/dev/null
+cd /etc/swizzin || exit 1
 git fetch origin overseer &>/dev/null
 git merge --no-edit origin/overseer &>/dev/null
 sed -i '/Continue setting up user/d' /etc/swizzin/scripts/box
