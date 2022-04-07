@@ -84,6 +84,20 @@ EOF
 
 mkdir -p /run/php/
 
+check_old_installs() {
+    echo "Checking for old installs..."
+    # Create array of old installs
+    OLD_INSTALLS=(radarr sonarr sickchill jackett couchpotato nzbget sabnzbdplus ombi lidarr organizr nzbhydra2 bazarr flexget filebot synclounge medusa lazylibrarian pyload ngpost komga ombiv4 readarr overseerr requestrr updatetool flood tautulli unpackerr mylar flaresolverr)
+
+    # Loop through array
+    for i in "${OLD_INSTALLS[@]}"; do
+        # Check if install exists
+        if [ -d "/etc/services.d/$i" ]; then
+            OLD_INSTALLS_EXIST=1
+        fi
+    done
+}
+
 check_old_installs
 
 if [ $OLD_INSTALLS_EXIST -eq 1 ]; then
