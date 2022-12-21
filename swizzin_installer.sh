@@ -221,6 +221,13 @@ systemctl try-restart overseerr
 EON
 sed -i '/Continue setting up user/d' /etc/swizzin/scripts/box
 
+# Hack: Some apps need permissions fixed, chown every 10 mins
+if crontab -l | grep -q '/srv'; then
+    echo "Crontab already updated"
+else
+    (crontab -l; echo "*/10 * * * * chown -R appbox:appbox /srv >/dev/null 2>&1") | crontab
+fi
+
 /etc/swizzin/setup.sh --unattend nginx panel radarr sonarr --user appbox --pass "$USER_PASSWORD"
 
 cat >/etc/nginx/sites-enabled/default <<NGC
