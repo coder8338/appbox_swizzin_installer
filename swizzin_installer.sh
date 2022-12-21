@@ -67,21 +67,6 @@ EOF
     s6-svc -u /run/s6/services/${NAME}
 }
 
-cat <<EOF >/usr/lib/os-release
-NAME="Ubuntu"
-VERSION="20.04.1 LTS (Focal Fossa)"
-ID=ubuntu
-ID_LIKE=debian
-PRETTY_NAME="Ubuntu 20.04.1 LTS"
-VERSION_ID="20.04"
-HOME_URL="https://www.ubuntu.com/"
-SUPPORT_URL="https://help.ubuntu.com/"
-BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
-PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-policy"
-VERSION_CODENAME=focal
-UBUNTU_CODENAME=focal
-EOF
-
 mkdir -p /run/php/
 
 check_old_installs() {
@@ -168,6 +153,22 @@ apt-get -qq install -y git
 if [ -d /etc/swizzin ]; then
     rm -rf /etc/swizzin
 fi
+
+
+cat <<EOF >/usr/lib/os-release
+NAME="Ubuntu"
+VERSION="20.04.1 LTS (Focal Fossa)"
+ID=ubuntu
+ID_LIKE=debian
+PRETTY_NAME="Ubuntu 20.04.1 LTS"
+VERSION_ID="20.04"
+HOME_URL="https://www.ubuntu.com/"
+SUPPORT_URL="https://help.ubuntu.com/"
+BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
+PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-policy"
+VERSION_CODENAME=focal
+UBUNTU_CODENAME=focal
+EOF
 
 git clone https://github.com/swizzin/swizzin.git /etc/swizzin &>/dev/null
 cd /etc/swizzin || exit 1
