@@ -41,6 +41,8 @@ This will ask for your login details which are as follows:
 If you want to install/remove apps, please type the following into your terminal:
 sudo box
 
+Some apps will require you to restart the Ubuntu app, so if you find something isn't working, please try that first!
+
 Enjoy!
 
     \n\n"
