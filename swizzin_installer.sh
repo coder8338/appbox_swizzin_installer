@@ -221,6 +221,11 @@ systemctl try-restart overseerr
 EON
 sed -i '/Continue setting up user/d' /etc/swizzin/scripts/box
 
+echo "Installing php required by some apps..."
+apt install -y php7.4-fpm
+sed -i 's/www-data/appbox/g' /etc/php/7.4/fpm/pool.d/www.conf
+systemctl restart php7.4-fpm
+
 # Hack: Some apps need permissions fixed, chown every 10 mins
 if crontab -l | grep -q '/srv'; then
     echo "Crontab already updated"
