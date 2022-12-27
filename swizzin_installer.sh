@@ -64,6 +64,8 @@ This will ask for your login details which are as follows:
 If you want to install/remove apps, please type the following into your terminal:
 sudo box
 
+Some apps will require you to restart the Debian app, so if you find something isn't working, please try that first!
+
 Enjoy!
 
     \n\n"
@@ -176,5 +178,17 @@ sed -i 's/FORMS_LOGIN = True/FORMS_LOGIN = False/g' /opt/swizzin/core/config.py
 
 systemctl restart panel
 systemctl restart nginx
+
+echo "Installing php required by some apps..."
+apt install -y php7.4-fpm
+sed -i 's/www-data/appbox/g' /etc/php/7.4/fpm/pool.d/www.conf
+systemctl restart php7.4-fpm
+
+# Hack: Some apps need permissions fixed, chown every 10 mins
+if crontab -l | grep -q '/srv'; then
+    echo "Crontab already updated"
+else
+    (crontab -l; echo "*/10 * * * * chown -R appbox:appbox /srv >/dev/null 2>&1") | crontab
+fi
 
 url_output
