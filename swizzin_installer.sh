@@ -321,6 +321,7 @@ server {
 NGC
 
 sed -i 's/FORMS_LOGIN = True/FORMS_LOGIN = False/g' /opt/swizzin/core/config.py
+echo 'RATELIMIT_ENABLED = False' >> /opt/swizzin/swizzin.cfg
 
 systemctl restart panel
 systemctl restart nginx
