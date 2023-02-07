@@ -85,19 +85,16 @@ sed -i '/Type=exec/d' /etc/swizzin/scripts/install/overseerr.sh
 sed -i 's/# _nginx/_nginx/g' /etc/swizzin/scripts/install/overseerr.sh
 cat >/etc/swizzin/scripts/nginx/overseerr.sh <<EON
 #!/usr/bin/env bash
-
 cat > /etc/nginx/apps/overseerr.conf << EOF
 location /overseerr {
     set \\\$app "overseerr";
     # Remove /overseerr path to pass to the app
     rewrite ^/overseerr/?(.*)$ /\\\$1 break;
     proxy_pass http://127.0.0.1:5055; # NO TRAILING SLASH
-
     # Redirect location headers
     proxy_redirect ^ /\\\$app;
     proxy_redirect /setup /\\\$app/setup;
     proxy_redirect /login /\\\$app/login;
-
     # Sub filters to replace hardcoded paths
     proxy_set_header Accept-Encoding "";
     sub_filter_once off;
@@ -118,13 +115,10 @@ location /overseerr {
     sub_filter '/site.webmanifest' '/\\\$app/site.webmanifest';
 }
 EOF
-
 cat > /opt/overseerr/env.conf << EOF
-
 # specify on which interface to listen, by default overseerr listens on all interfaces
 HOST=127.0.0.1
 EOF
-
 systemctl try-restart overseerr
 EON
 sed -i '/Continue setting up user/d' /etc/swizzin/scripts/box
