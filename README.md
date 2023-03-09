@@ -21,6 +21,12 @@ In order to get the best performance, I recommend using Debian 11, it has minima
 ## Pre-installed apps
 The script will pre-install sonarr, radarr & panel apps.
 
+## Sonarr Error : Failed to load series from API bug
+If you get this error ^ use the following command to fix it:
+```
+sed -i 's/127.0.0.1/*/g' /home/appbox/.config/Sonarr/config.xml && systemctl restart sonarr
+```
+
 ## Requesting additional apps
 You can request new apps & features here: https://feathub.com/liaralabs/swizzin
 
